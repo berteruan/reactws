@@ -1,8 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import adonisWs from "@adonisjs/websocket-client";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  useEffect(() => {
+    const ws = adonisWs("ws://192.168.1.14:3333");
+    ws.connect();
+
+    const chat = ws.subscribe("chat");
+
+    chat.on("ready", () => {
+      chat.emit("message", "Hello WebSocket");
+    });
+
+    chat.on("message", message => {
+      console.log("Nova mensagem recebida do socket: ", message);
+    });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
